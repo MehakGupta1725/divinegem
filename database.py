@@ -224,3 +224,20 @@ def get_user_recommendations(username):
     conn.close()
 
     return recommendations
+
+def get_user_consultations(username):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM consultations
+        WHERE name = ?
+        ORDER BY created_at DESC
+    """, (username,))
+
+    consultations = cursor.fetchall()
+
+    conn.close()
+
+    return consultations
