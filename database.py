@@ -97,16 +97,6 @@ def save_consultation(name, phone, preferred_date):
         datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     ))
 
-    # Users table
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        role TEXT NOT NULL
-    )
-""")
-
     conn.commit()
     conn.close()
 
@@ -217,3 +207,20 @@ def initialize_admin():
         "admin123",
         "admin"
     )
+
+def get_user_recommendations(username):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM recommendations
+        WHERE name = ?
+        ORDER BY recommendation_date DESC
+    """, (username,))
+
+    recommendations = cursor.fetchall()
+
+    conn.close()
+
+    return recommendations
