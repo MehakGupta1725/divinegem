@@ -5,7 +5,9 @@ from gemstones import gemstones
 
 # Initialize database
 create_tables()
+from database import initialize_admin
 
+initialize_admin()
 # Page configuration
 st.set_page_config(
     page_title="DivineGem",

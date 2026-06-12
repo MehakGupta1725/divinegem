@@ -1,4 +1,5 @@
 import sqlite3
+import hashlib
 from datetime import datetime
 
 DB_NAME = "consultations.db"
@@ -37,7 +38,15 @@ def create_tables():
             created_at TEXT NOT NULL
         )
     """)
-
+    
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        role TEXT NOT NULL
+    )
+""")
     conn.commit()
     conn.close()
 
@@ -88,6 +97,16 @@ def save_consultation(name, phone, preferred_date):
         datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     ))
 
+    # Users table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        role TEXT NOT NULL
+    )
+""")
+
     conn.commit()
     conn.close()
 
@@ -126,3 +145,75 @@ def get_consultations():
     conn.close()
 
     return data
+
+def hash_password(password):
+    """Hash password using SHA256."""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+def create_user(username, password, role="user"):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            INSERT INTO users (username, password, role)
+            VALUES (?, ?, ?)
+        """, (
+            username,
+            hash_password(password),
+            role
+        ))
+
+        conn.commit()
+        return True
+
+    except sqlite3.IntegrityError:
+        return False
+
+    finally:
+        conn.close()
+
+
+def authenticate_user(username, password):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT role
+        FROM users
+        WHERE username = ?
+        AND password = ?
+    """, (
+        username,
+        hash_password(password)
+    ))
+
+    user = cursor.fetchone()
+
+    conn.close()
+
+    return user
+
+
+def get_users():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, username, role
+        FROM users
+    """)
+
+    users = cursor.fetchall()
+
+    conn.close()
+
+    return users
+
+def initialize_admin():
+    create_user(
+        "admin",
+        "admin123",
+        "admin"
+    )
