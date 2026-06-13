@@ -148,7 +148,7 @@ else:
 
     if st.session_state.role == "user":
 
-        from pages.user_dashboard import (
+        from user_dashboard import (
             show_user_dashboard
         )
 
@@ -158,7 +158,7 @@ else:
 
     elif st.session_state.role == "admin":
 
-        from pages.admin_dashboard import (
+        from admin_dashboard import (
             show_admin_dashboard
         )
 
