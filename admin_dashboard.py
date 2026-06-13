@@ -10,20 +10,26 @@ from database import (
 
 def show_admin_dashboard():
 
-    st.title("📊 Admin Dashboard")
+    st.title("📊 DivineGem Admin Portal")
 
-    menu = st.sidebar.selectbox(
-        "Admin Menu",
-        [
-            "Analytics",
-            "Users",
-            "Recommendations",
-            "Consultations"
-        ]
+    st.write(
+        "Monitor users, recommendations, consultations, "
+        "and overall platform performance."
     )
 
-    # Analytics
-    if menu == "Analytics":
+    st.divider()
+
+    tab1, tab2, tab3, tab4 = st.tabs([
+        "📈 Analytics",
+        "👥 Users",
+        "💎 Recommendations",
+        "📞 Consultations"
+    ])
+
+    # ==========================
+    # Analytics Tab
+    # ==========================
+    with tab1:
 
         st.header("📈 Platform Analytics")
 
@@ -31,40 +37,48 @@ def show_admin_dashboard():
         recommendations = get_recommendations()
         consultations = get_consultations()
 
-        col1, col2 = st.columns(2)
+        rec_df = None
+
+        if recommendations:
+
+            rec_df = pd.DataFrame(
+                recommendations,
+                columns=[
+                    "ID",
+                    "Username",
+                    "Zodiac",
+                    "Concern",
+                    "Gemstone",
+                    "Date"
+                ]
+            )
+
+        col1, col2, col3, col4 = st.columns(4)
 
         with col1:
 
             st.metric(
-                "Total Users",
+                "👥 Users",
                 len(users)
-            )
-
-            st.metric(
-                "Total Recommendations",
-                len(recommendations)
             )
 
         with col2:
 
             st.metric(
-                "Total Consultations",
+                "💎 Recommendations",
+                len(recommendations)
+            )
+
+        with col3:
+
+            st.metric(
+                "📞 Consultations",
                 len(consultations)
             )
 
-            if recommendations:
+        with col4:
 
-                rec_df = pd.DataFrame(
-                    recommendations,
-                    columns=[
-                        "ID",
-                        "Username",
-                        "Zodiac",
-                        "Concern",
-                        "Gemstone",
-                        "Date"
-                    ]
-                )
+            if rec_df is not None:
 
                 common_gem = (
                     rec_df["Gemstone"]
@@ -72,12 +86,49 @@ def show_admin_dashboard():
                 )
 
                 st.metric(
-                    "Most Recommended Gemstone",
+                    "🏆 Top Gem",
                     common_gem
                 )
 
-    # Users
-    elif menu == "Users":
+            else:
+
+                st.metric(
+                    "🏆 Top Gem",
+                    "N/A"
+                )
+
+        if rec_df is not None:
+
+            st.divider()
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+
+                st.subheader(
+                    "💎 Gemstone Trends"
+                )
+
+                st.bar_chart(
+                    rec_df["Gemstone"]
+                    .value_counts()
+                )
+
+            with col2:
+
+                st.subheader(
+                    "🎯 User Concerns"
+                )
+
+                st.bar_chart(
+                    rec_df["Concern"]
+                    .value_counts()
+                )
+
+    # ==========================
+    # Users Tab
+    # ==========================
+    with tab2:
 
         st.header("👥 Registered Users")
 
@@ -96,7 +147,8 @@ def show_admin_dashboard():
 
             st.dataframe(
                 df,
-                use_container_width=True
+                use_container_width=True,
+                hide_index=True
             )
 
         else:
@@ -105,8 +157,10 @@ def show_admin_dashboard():
                 "No users found."
             )
 
-    # Recommendations
-    elif menu == "Recommendations":
+    # ==========================
+    # Recommendations Tab
+    # ==========================
+    with tab3:
 
         st.header(
             "💎 Recommendation History"
@@ -132,7 +186,8 @@ def show_admin_dashboard():
 
             st.dataframe(
                 df,
-                use_container_width=True
+                use_container_width=True,
+                hide_index=True
             )
 
         else:
@@ -141,11 +196,13 @@ def show_admin_dashboard():
                 "No recommendations found."
             )
 
-    # Consultations
-    elif menu == "Consultations":
+    # ==========================
+    # Consultations Tab
+    # ==========================
+    with tab4:
 
         st.header(
-            "🧙 Consultation Requests"
+            "📞 Consultation Requests"
         )
 
         consultations = (
@@ -167,7 +224,8 @@ def show_admin_dashboard():
 
             st.dataframe(
                 df,
-                use_container_width=True
+                use_container_width=True,
+                hide_index=True
             )
 
         else:
