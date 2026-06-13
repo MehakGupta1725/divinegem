@@ -10,24 +10,40 @@ from database import (
 from recommendation_engine import get_recommendation
 from gemstones import gemstones
 
+gem_images = {
+    "Emerald": "assets/Emerald.png",
+    "Ruby": "assets/Ruby.png",
+    "Diamond": "assets/Diamond.png",
+    "Pearl": "assets/Pearl.png",
+    "Yellow Sapphire": "assets/Yellow Sapphire.png",
+    "Blue Sapphire": "assets/Blue Sapphire.png",
+    "Coral": "assets/Coral.png",
+}
+
 
 def show_user_dashboard(username):
 
-    st.title("💎 User Dashboard")
+    st.title("💎 DivineGem")
 
-    st.write(f"Welcome, **{username}**!")
+    st.subheader(
+    f"Welcome back, {username} 👋"
+)
 
-    menu = st.sidebar.selectbox(
-        "Menu",
-        [
-            "Get Recommendation",
-            "My Recommendations",
-            "Book Consultation"
-        ]
-    )
+    st.write(
+    "Explore personalized gemstone guidance "
+    "and manage your consultations."
+)
+
+    st.divider()
+
+    tab1, tab2, tab3 = st.tabs([
+    "🔮 Get Recommendation",
+    "📜 My History",
+    "📅 Book Consultation"
+])
 
     # Recommendation
-    if menu == "Get Recommendation":
+    with tab1:
 
         st.header("🔮 Gemstone Assessment")
 
@@ -70,25 +86,33 @@ def show_user_dashboard(username):
 
             gem = gemstones[primary]
 
-            st.success(
-                f"Recommended Gemstone: {primary}"
-            )
+            st.markdown(f"""
+## 💎 {primary}
+
+Your personalized recommendation.
+""")
 
             st.write(
                 f"**Planet:** {gem['planet']}"
             )
 
-            st.write("### Benefits")
+            st.subheader("✨ Benefits")
 
             for benefit in gem["benefits"]:
                 st.write(f"✅ {benefit}")
 
-            st.info(
-                gem["wearing_instructions"]
-            )
+            with st.expander(
+           "🧿 Wearing Instructions"
+            ):
+             st.write(
+            gem["wearing_instructions"]
+    )
 
-            st.warning(
-                gem["precautions"]
+            with st.expander(
+                "⚠️ Precautions"
+            ):
+             st.write(
+             gem["precautions"]
             )
 
             st.write(
@@ -96,7 +120,7 @@ def show_user_dashboard(username):
             )
 
     # Recommendation History
-    elif menu == "My Recommendations":
+    with tab2:
 
         st.header("📜 My Recommendations")
 
@@ -132,7 +156,7 @@ def show_user_dashboard(username):
             )
 
     # Consultation
-    elif menu == "Book Consultation":
+    with tab3:
 
         st.header(
             "🧙 Book Consultation"
@@ -169,3 +193,4 @@ def show_user_dashboard(username):
                 st.error(
                     "Please enter phone number."
                 )
+
