@@ -26,6 +26,30 @@ st.set_page_config(
     page_icon="💎",
     layout="wide"
 )
+st.markdown("""
+<style>
+
+.block-container {
+    padding-top: 2rem;
+    padding-left: 5rem;
+    padding-right: 5rem;
+}
+
+.stButton > button {
+    width: 100%;
+    height: 3em;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+div[data-testid="metric-container"] {
+    border: 1px solid #31333F;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 # ------------------------
 # LOGIN / SIGNUP
@@ -33,10 +57,50 @@ st.set_page_config(
 
 if not st.session_state.logged_in:
 
-    st.title("💎 DivineGem")
-    st.subheader("Gemstone Consultation Platform")
+    st.markdown(
+        """
+        <div style='text-align: center;'>
 
-    tab1, tab2 = st.tabs(["Login", "Sign Up"])
+        <h1>💎 DivineGem</h1>
+
+        <h3>
+        Personalized Gemstone Guidance
+        for Modern Spiritual Wellness
+        </h3>
+
+        </div>
+
+        <hr>
+
+        """,
+        unsafe_allow_html=True
+    )
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+
+        st.success(
+            "✨ Personalized Recommendations"
+        )
+
+    with col2:
+
+        st.success(
+            "🧙 Expert Consultations"
+        )
+
+    with col3:
+
+        st.success(
+            "📈 Track Your Journey"
+        )
+
+    st.divider()
+
+    tab1, tab2 = st.tabs(
+        ["🔐 Login", "📝 Sign Up"]
+    )
 
     # LOGIN
     with tab1:
